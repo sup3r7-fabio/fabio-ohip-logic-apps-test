@@ -1,0 +1,61 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Create Service Principal",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/create-service-principal.ps1",
+				"-ResourceGroup",
+				"${input:resource-group}",
+				"-SpName",
+				"${input:sp-name}",
+				"-GitHubRepo",
+				"${input:github-repo}",
+				"-UseSubscriptionScope",
+				"${input:use-subscription-scope}"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "resource-group",
+			"type": "promptString",
+			"description": "Azure resource group",
+			"default": "scandic-ohip-logic-rg"
+		},
+		{
+			"id": "sp-name",
+			"type": "promptString",
+			"description": "Service principal name",
+			"default": "scandic-ohip-logic-sp"
+		},
+		{
+			"id": "github-repo",
+			"type": "promptString",
+			"description": "GitHub repo (owner/repo) to set secret (leave blank to skip)",
+			"default": "sup3r7-fabio/fabio-ohip-logic-apps-test"
+		},
+		{
+			"id": "use-subscription-scope",
+			"type": "pickString",
+			"description": "Scope SP to subscription? (select true to scope to subscription)",
+			"options": [
+				"$true",
+				"$false"
+			],
+			"default": "$true"
+		}
+	]
+}
