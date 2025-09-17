@@ -41,7 +41,7 @@ jobs:
       - name: Validate Bicep
         shell: pwsh
         run: |
-          az bicep build "${{ github.workspace }}/infrastructure/main.bicep" --stdout
+          az bicep build --file "${{ github.workspace }}/infrastructure/main.bicep" --stdout
 
       - name: Create resource group if missing
         shell: pwsh
