@@ -8,11 +8,11 @@ on:
       resource_group:
         description: 'Resource group to deploy to'
         required: true
-        default: 'ohipdemo-rg'
+        default: 'scandic-ohip-logic-rg'
       location:
         description: 'Azure location'
         required: true
-        default: 'eastus'
+        default: 'swedencentral'
 
 jobs:
   deploy-infra:

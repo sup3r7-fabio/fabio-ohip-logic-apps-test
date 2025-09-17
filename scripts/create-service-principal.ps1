@@ -4,14 +4,14 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$ResourceGroup = 'scandic-ohip-logic-rg',
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$SpName = 'scandic-ohip-logic-sp',
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$GitHubRepo = 'sup3r7-fabio/fabio-ohip-logic-apps-test',
 
     [Parameter()]
-    [switch]$UseSubscriptionScope = [switch]$true
+    [switch]$UseSubscriptionScope = [switch]$false
 )
 
 # Get subscription ID
@@ -40,8 +40,7 @@ try {
     az ad sp create-for-rbac `
         --name $SpName `
         --role Contributor `
-        --scopes $scope `
-        --sdk-auth | Out-File -FilePath azure-creds.json -Encoding utf8
+        --scopes $scope ` | Out-File -FilePath azure-creds.json -Encoding utf8
 
     Write-Host "Service principal created. SDK auth JSON written to: $(Resolve-Path ./azure-creds.json)"
 }
@@ -54,7 +53,7 @@ catch {
 if ($GitHubRepo -and (Get-Command gh -ErrorAction SilentlyContinue)) {
     Write-Host "Setting GitHub secret AZURE_CREDENTIALS for repo $GitHubRepo (using gh CLI)"
     $body = Get-Content -Raw ./azure-creds.json
-    gh secret set AZURE_CREDENTIALS --repo $GitHubRepo --body $body
+    gh secret set AZURE_CREDENTIALS --repo $GitHubRepo --body $body --env 'dev'
     Write-Host "GitHub secret AZURE_CREDENTIALS set for $GitHubRepo"
 }
 elseif ($GitHubRepo) {

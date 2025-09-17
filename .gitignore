@@ -3,3 +3,4 @@ node_modules/
 .vscode/settings.json
 *.local
 ./azure-creds.json
+azure-creds.json
