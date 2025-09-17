@@ -6,6 +6,9 @@ param namePrefix string = 'ohipdemo'
 
 @description('Prefix for generated names')
 param nameSuffix string = 'fabio'
+// Load Logic App workflow definition from the repo so the compiled ARM template
+// will contain a proper `definition` (including the required $schema).
+var logicAppDefinition = json(loadTextContent('../logic-app/workflow-definition.json'))
 // Storage account (used for staging by Data Factory)
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: toLower('${namePrefix}st${uniqueString(resourceGroup().id)}')
@@ -61,7 +64,7 @@ resource logicApp 'Microsoft.Logic/workflows@2019-05-01' = {
   name: toLower('${namePrefix}-logic')
   location: location
   properties: {
-    definition: {}
+    definition: logicAppDefinition
     // the runtimeModel and other properties are typically supplied during deployment of the workflow definition
   }
 }

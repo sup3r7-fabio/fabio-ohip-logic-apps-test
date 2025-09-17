@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "17042556870847564583"
+      "templateHash": "9127553290200464712"
     }
   },
   "parameters": {
@@ -22,7 +22,18 @@
       "metadata": {
         "description": "Prefix for generated names"
       }
+    },
+    "nameSuffix": {
+      "type": "string",
+      "defaultValue": "fabio",
+      "metadata": {
+        "description": "Prefix for generated names"
+      }
     }
+  },
+  "variables": {
+    "$fxv#0": "{\r\n  \"$schema\": \"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#\",\r\n  \"contentVersion\": \"1.0.0.0\",\r\n  \"parameters\": {},\r\n  \"triggers\": {\r\n    \"When_a_message_is_received_in_a_topic_subscription\": {\r\n      \"type\": \"ApiConnection\",\r\n      \"inputs\": {\r\n        \"host\": {\r\n          \"connection\": {\r\n            \"name\": \"@parameters('$connections')['servicebus']['connectionId']\"\r\n          }\r\n        },\r\n        \"path\": \"/topics/bookings/subscriptions/processing-sub/messages\",\r\n        \"method\": \"get\"\r\n      }\r\n    }\r\n  },\r\n  \"actions\": {\r\n    \"Parse_JSON\": {\r\n      \"type\": \"ParseJson\",\r\n      \"inputs\": {\r\n        \"content\": \"@triggerBody()\",\r\n        \"schema\": {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"bookingId\": { \"type\": \"string\" },\r\n            \"guestName\": { \"type\": \"string\" }\r\n          }\r\n        }\r\n      },\r\n      \"runAfter\": {}\r\n    },\r\n    \"Log_Booking\": {\r\n      \"type\": \"Http\",\r\n      \"inputs\": {\r\n        \"method\": \"POST\",\r\n        \"uri\": \"https://httpbin.org/post\",\r\n        \"body\": \"@body('Parse_JSON')\"\r\n      },\r\n      \"runAfter\": {\r\n        \"Parse_JSON\": [\r\n          \"Succeeded\"\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  \"outputs\": {}\r\n}\r\n",
+    "logicAppDefinition": "[json(variables('$fxv#0'))]"
   },
   "resources": [
     {
@@ -41,7 +52,7 @@
     {
       "type": "Microsoft.ServiceBus/namespaces",
       "apiVersion": "2021-11-01",
-      "name": "[toLower(format('{0}-sb', parameters('namePrefix')))]",
+      "name": "[toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix')))]",
       "location": "[parameters('location')]",
       "sku": {
         "name": "Standard",
@@ -52,24 +63,24 @@
     {
       "type": "Microsoft.ServiceBus/namespaces/topics",
       "apiVersion": "2021-11-01",
-      "name": "[format('{0}/{1}', toLower(format('{0}-sb', parameters('namePrefix'))), 'bookings')]",
+      "name": "[format('{0}/{1}', toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix'))), 'bookings')]",
       "properties": {
         "defaultMessageTimeToLive": "P7D"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces', toLower(format('{0}-sb', parameters('namePrefix'))))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix'))))]"
       ]
     },
     {
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "apiVersion": "2021-11-01",
-      "name": "[format('{0}/{1}/{2}', toLower(format('{0}-sb', parameters('namePrefix'))), 'bookings', 'processing-sub')]",
+      "name": "[format('{0}/{1}/{2}', toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix'))), 'bookings', 'processing-sub')]",
       "properties": {
         "lockDuration": "PT1M",
         "maxDeliveryCount": 5
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ServiceBus/namespaces/topics', toLower(format('{0}-sb', parameters('namePrefix'))), 'bookings')]"
+        "[resourceId('Microsoft.ServiceBus/namespaces/topics', toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix'))), 'bookings')]"
       ]
     },
     {
@@ -81,11 +92,11 @@
     },
     {
       "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2017-07-01",
+      "apiVersion": "2019-05-01",
       "name": "[toLower(format('{0}-logic', parameters('namePrefix')))]",
       "location": "[parameters('location')]",
       "properties": {
-        "definition": {}
+        "definition": "[variables('logicAppDefinition')]"
       }
     }
   ],
@@ -96,7 +107,7 @@
     },
     "serviceBusNamespaceName": {
       "type": "string",
-      "value": "[toLower(format('{0}-sb', parameters('namePrefix')))]"
+      "value": "[toLower(format('{0}-sb-{1}', parameters('namePrefix'), parameters('nameSuffix')))]"
     },
     "dataFactoryName": {
       "type": "string",
