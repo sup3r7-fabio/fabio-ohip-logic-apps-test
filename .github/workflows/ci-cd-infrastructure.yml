@@ -46,8 +46,8 @@ jobs:
       - name: Create resource group if missing
         shell: pwsh
         run: |
-          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
-          $loc = "${{ github.event.inputs.location || 'eastus' }}"
+          $rg = "${{ github.event.inputs.resource_group || 'scandic-ohip-logic-rg' }}"
+          $loc = "${{ github.event.inputs.location || 'swedencentral' }}"
           az group create -n $rg -l $loc
 
       - name: Deploy Bicep (group deployment)
