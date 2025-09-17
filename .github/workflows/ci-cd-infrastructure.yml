@@ -46,20 +46,20 @@ jobs:
       - name: Create resource group if missing
         shell: pwsh
         run: |
-          $rg = "${{ github.event.inputs.resource_group || 'scandic-ohip-logic-rg' }}"
-          $loc = "${{ github.event.inputs.location || 'swedencentral' }}"
+          $rg = "${{ vars.RESOURCE_GROUP_NAME }}"
+          $loc = "${{ vars.RESOURCE_GROUP_LOCATION }}"  
           az group create -n $rg -l $loc
 
       - name: Deploy Bicep (group deployment)
         shell: pwsh
         run: |
-          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
+          $rg = "${{ vars.RESOURCE_GROUP_NAME }}"
           $depName = "infra-deploy-${{ github.run_id }}"
           az deployment group create -g $rg -n $depName -f "${{ github.workspace }}/infrastructure/main.bicep" -p "${{ github.workspace }}/infrastructure/parameters.json"
 
       - name: Show deployment outputs
         shell: pwsh
         run: |
-          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
+          $rg = "${{ vars.RESOURCE_GROUP_NAME }}"
           $depName = "infra-deploy-${{ github.run_id }}"
           az deployment group show -g $rg -n $depName --query properties.outputs -o json
