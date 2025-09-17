@@ -17,6 +17,7 @@ on:
 jobs:
   deploy-infra:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
