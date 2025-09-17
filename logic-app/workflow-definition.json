@@ -12,7 +12,11 @@
           }
         },
         "path": "/topics/bookings/subscriptions/processing-sub/messages",
-        "method": "get"
+        "method": "get",
+        "recurrence": {
+          "frequency": "Minute",
+          "interval": 1
+        }
       }
     }
   },

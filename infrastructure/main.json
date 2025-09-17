@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "9127553290200464712"
+      "templateHash": "12068628069166850418"
     }
   },
   "parameters": {
@@ -32,7 +32,7 @@
     }
   },
   "variables": {
-    "$fxv#0": "{\r\n  \"$schema\": \"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#\",\r\n  \"contentVersion\": \"1.0.0.0\",\r\n  \"parameters\": {},\r\n  \"triggers\": {\r\n    \"When_a_message_is_received_in_a_topic_subscription\": {\r\n      \"type\": \"ApiConnection\",\r\n      \"inputs\": {\r\n        \"host\": {\r\n          \"connection\": {\r\n            \"name\": \"@parameters('$connections')['servicebus']['connectionId']\"\r\n          }\r\n        },\r\n        \"path\": \"/topics/bookings/subscriptions/processing-sub/messages\",\r\n        \"method\": \"get\"\r\n      }\r\n    }\r\n  },\r\n  \"actions\": {\r\n    \"Parse_JSON\": {\r\n      \"type\": \"ParseJson\",\r\n      \"inputs\": {\r\n        \"content\": \"@triggerBody()\",\r\n        \"schema\": {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"bookingId\": { \"type\": \"string\" },\r\n            \"guestName\": { \"type\": \"string\" }\r\n          }\r\n        }\r\n      },\r\n      \"runAfter\": {}\r\n    },\r\n    \"Log_Booking\": {\r\n      \"type\": \"Http\",\r\n      \"inputs\": {\r\n        \"method\": \"POST\",\r\n        \"uri\": \"https://httpbin.org/post\",\r\n        \"body\": \"@body('Parse_JSON')\"\r\n      },\r\n      \"runAfter\": {\r\n        \"Parse_JSON\": [\r\n          \"Succeeded\"\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  \"outputs\": {}\r\n}\r\n",
+    "$fxv#0": "{\r\n  \"$schema\": \"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#\",\r\n  \"contentVersion\": \"1.0.0.0\",\r\n  \"parameters\": {},\r\n  \"triggers\": {\r\n    \"When_a_message_is_received_in_a_topic_subscription\": {\r\n      \"type\": \"ApiConnection\",\r\n      \"inputs\": {\r\n        \"host\": {\r\n          \"connection\": {\r\n            \"name\": \"@parameters('$connections')['servicebus']['connectionId']\"\r\n          }\r\n        },\r\n        \"path\": \"/topics/bookings/subscriptions/processing-sub/messages\",\r\n        \"method\": \"get\",\r\n        \"recurrence\": {\r\n          \"frequency\": \"Minute\",\r\n          \"interval\": 1\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"actions\": {\r\n    \"Parse_JSON\": {\r\n      \"type\": \"ParseJson\",\r\n      \"inputs\": {\r\n        \"content\": \"@triggerBody()\",\r\n        \"schema\": {\r\n          \"type\": \"object\",\r\n          \"properties\": {\r\n            \"bookingId\": { \"type\": \"string\" },\r\n            \"guestName\": { \"type\": \"string\" }\r\n          }\r\n        }\r\n      },\r\n      \"runAfter\": {}\r\n    },\r\n    \"Log_Booking\": {\r\n      \"type\": \"Http\",\r\n      \"inputs\": {\r\n        \"method\": \"POST\",\r\n        \"uri\": \"https://httpbin.org/post\",\r\n        \"body\": \"@body('Parse_JSON')\"\r\n      },\r\n      \"runAfter\": {\r\n        \"Parse_JSON\": [\r\n          \"Succeeded\"\r\n        ]\r\n      }\r\n    }\r\n  },\r\n  \"outputs\": {}\r\n}\r\n",
     "logicAppDefinition": "[json(variables('$fxv#0'))]"
   },
   "resources": [
