@@ -4,6 +4,8 @@ param location string = resourceGroup().location
 @description('Prefix for generated names')
 param namePrefix string = 'ohipdemo'
 
+@description('Prefix for generated names')
+param nameSuffix string = 'fabio'
 // Storage account (used for staging by Data Factory)
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: toLower('${namePrefix}st${uniqueString(resourceGroup().id)}')
@@ -19,7 +21,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 
 // Service Bus namespace (Standard - cheapest sku that supports topics)
 resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
-  name: toLower('${namePrefix}-sb')
+  name: toLower('${namePrefix}-sb-${nameSuffix}')
   location: location
   sku: {
     name: 'Standard'
