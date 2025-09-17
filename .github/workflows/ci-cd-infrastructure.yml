@@ -1,0 +1,63 @@
+name: CI/CD - Infrastructure (Bicep)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      resource_group:
+        description: 'Resource group to deploy to'
+        required: true
+        default: 'ohipdemo-rg'
+      location:
+        description: 'Azure location'
+        required: true
+        default: 'eastus'
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node (for Function packaging if needed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Login to Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install Bicep CLI
+        shell: pwsh
+        run: |
+          az bicep install
+
+      - name: Validate Bicep
+        shell: pwsh
+        run: |
+          az bicep build "${{ github.workspace }}/infrastructure/main.bicep" --stdout
+
+      - name: Create resource group if missing
+        shell: pwsh
+        run: |
+          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
+          $loc = "${{ github.event.inputs.location || 'eastus' }}"
+          az group create -n $rg -l $loc
+
+      - name: Deploy Bicep (group deployment)
+        shell: pwsh
+        run: |
+          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
+          $depName = "infra-deploy-${{ github.run_id }}"
+          az deployment group create -g $rg -n $depName -f "${{ github.workspace }}/infrastructure/main.bicep" -p "${{ github.workspace }}/infrastructure/parameters.json"
+
+      - name: Show deployment outputs
+        shell: pwsh
+        run: |
+          $rg = "${{ github.event.inputs.resource_group || 'ohipdemo-rg' }}"
+          $depName = "infra-deploy-${{ github.run_id }}"
+          az deployment group show -g $rg -n $depName --query properties.outputs -o json

@@ -1,0 +1,12 @@
+{
+  "topic": {
+    "name": "bookings",
+    "defaultMessageTimeToLive": "P7D"
+  },
+  "subscription": {
+    "name": "processing-sub",
+    "lockDuration": "PT1M",
+    "maxDeliveryCount": 5
+  },
+  "notes": "Use Azure CLI to create a topic and subscription: az servicebus topic create --name bookings --namespace-name <ns> --resource-group <rg> and az servicebus topic subscription create --name processing-sub --topic-name bookings --namespace-name <ns> --resource-group <rg>"
+}

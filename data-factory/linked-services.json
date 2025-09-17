@@ -1,0 +1,22 @@
+{
+  "linkedServices": [
+    {
+      "name": "StorageLinkedService",
+      "properties": {
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+          "connectionString": "DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<accountKey>;EndpointSuffix=core.windows.net"
+        }
+      }
+    },
+    {
+      "name": "AzureFunctionLinkedService",
+      "properties": {
+        "type": "AzureFunction",
+        "typeProperties": {
+          "functionAppUrl": "https://<functionapp>.azurewebsites.net"
+        }
+      }
+    }
+  ]
+}

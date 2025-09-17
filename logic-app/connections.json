@@ -1,0 +1,7 @@
+{
+  "servicebus": {
+    "connectionId": "/subscriptions/<subId>/resourceGroups/<rg>/providers/Microsoft.Web/connections/servicebus",
+    "connectionName": "servicebus",
+    "id": "/subscriptions/<subId>/providers/Microsoft.Web/locations/<location>/managedApis/servicebus"
+  }
+}

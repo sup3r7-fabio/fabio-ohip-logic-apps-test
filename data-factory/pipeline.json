@@ -1,0 +1,33 @@
+{
+  "name": "OHIP_Fetch_and_Publish",
+  "properties": {
+    "activities": [
+      {
+        "name": "HttpGet_OHIP_Mock",
+        "type": "WebActivity",
+        "typeProperties": {
+          "url": "https://raw.githubusercontent.com/oracle/hospitality-api-docs/main/samples/mock-booking.json",
+          "method": "GET",
+          "headers": {}
+        }
+      },
+      {
+        "name": "Send_To_ServiceBus",
+        "type": "AzureFunctionActivity",
+        "dependsOn": [
+          {
+            "activity": "HttpGet_OHIP_Mock",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "functionName": "SendToServiceBus",
+          "method": "POST",
+          "body": "@activity('HttpGet_OHIP_Mock').output"
+        }
+      }
+    ]
+  }
+}

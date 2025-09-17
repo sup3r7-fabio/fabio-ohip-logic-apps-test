@@ -1,0 +1,12 @@
+{
+  "name": "ohip-demo-function",
+  "version": "1.0.0",
+  "description": "Sample function to send OHIP payloads to Service Bus",
+  "main": "index.js",
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/service-bus": "^7.10.0"
+  }
+}

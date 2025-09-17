@@ -1,0 +1,7 @@
+{
+  "bookingId": "BKG-1001",
+  "guestName": "Jane Doe",
+  "room": "101",
+  "checkIn": "2025-09-17T15:00:00Z",
+  "checkOut": "2025-09-19T11:00:00Z"
+}
